@@ -1,0 +1,62 @@
+﻿@model IEnumerable<GeorgiaStockings.Models.Stocking>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+
+    @using (Html.BeginForm())
+    { 
+        <p>
+            County: @Html.DropDownList("stockingsCounty", "All")
+            Water Body: @Html.TextBox("SearchString")
+            <br />
+            <input type="submit" value="Filter" />
+        </p>
+    }
+</p>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.WaterBody)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.County)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Note.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Schedule.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.WaterBody)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.County)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Note.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Schedule.Name)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.StockingId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.StockingId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.StockingId })
+        </td>
+    </tr>
+}
+
+</table>

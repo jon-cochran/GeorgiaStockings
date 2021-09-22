@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GeorgiaStockingsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Notes">
+    <Key>
+      <PropertyRef Name="NoteId" />
+    </Key>
+    <Property Name="NoteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Description" Type="varchar" MaxLength="100" />
+    <Property Name="SequenceNo" Type="int" />
+  </EntityType>
+  <EntityType Name="Schedule">
+    <Key>
+      <PropertyRef Name="ScheduleId" />
+    </Key>
+    <Property Name="ScheduleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="50" />
+    <Property Name="SequenceNo" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6013: The table/view 'GeorgiaStockings.dbo.StagingStockings' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="StagingStockings">
+          <Property Name="WaterBody" Type="varchar" MaxLength="50" />
+          <Property Name="County" Type="varchar" MaxLength="50" />
+          <Property Name="ScheduleId" Type="int" />
+          <Property Name="Notes" Type="varchar" MaxLength="100" />
+        </EntityType>-->
+  <EntityType Name="Stockings">
+    <Key>
+      <PropertyRef Name="StockingId" />
+    </Key>
+    <Property Name="StockingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WaterBody" Type="varchar" MaxLength="50" />
+    <Property Name="County" Type="varchar" MaxLength="50" />
+    <Property Name="ScheduleId" Type="int" />
+    <Property Name="NoteId" Type="int" />
+  </EntityType>
+  <Association Name="FK_Stockings_Note">
+    <End Role="Notes" Type="Self.Notes" Multiplicity="0..1" />
+    <End Role="Stockings" Type="Self.Stockings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Notes">
+        <PropertyRef Name="NoteId" />
+      </Principal>
+      <Dependent Role="Stockings">
+        <PropertyRef Name="NoteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Stockings_Schedule">
+    <End Role="Schedule" Type="Self.Schedule" Multiplicity="0..1" />
+    <End Role="Stockings" Type="Self.Stockings" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Schedule">
+        <PropertyRef Name="ScheduleId" />
+      </Principal>
+      <Dependent Role="Stockings">
+        <PropertyRef Name="ScheduleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Function Name="GetScheduleByCounty" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="CountyID" Type="varchar" Mode="In" />
+  </Function>
+  <Function Name="Split" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="Delimiter" Type="char" Mode="In" />
+    <Parameter Name="String" Type="varchar(max)" Mode="In" />
+    <ReturnType>
+      <CollectionType>
+        <RowType>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="String" Type="varchar(max)" />
+        </RowType>
+      </CollectionType>
+    </ReturnType>
+  </Function>
+  <EntityContainer Name="GeorgiaStockingsModelStoreContainer">
+    <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Schedule" EntityType="Self.Schedule" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Stockings" EntityType="Self.Stockings" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_Stockings_Note" Association="Self.FK_Stockings_Note">
+      <End Role="Notes" EntitySet="Notes" />
+      <End Role="Stockings" EntitySet="Stockings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Stockings_Schedule" Association="Self.FK_Stockings_Schedule">
+      <End Role="Schedule" EntitySet="Schedule" />
+      <End Role="Stockings" EntitySet="Stockings" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

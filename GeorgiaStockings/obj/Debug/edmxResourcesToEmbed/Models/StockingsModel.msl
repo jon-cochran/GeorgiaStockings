@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="GeorgiaStockingsModelStoreContainer" CdmEntityContainer="GeorgiaStockingsEntities">
+    <EntitySetMapping Name="Notes">
+      <EntityTypeMapping TypeName="GeorgiaStockingsModel.Note">
+        <MappingFragment StoreEntitySet="Notes">
+          <ScalarProperty Name="NoteId" ColumnName="NoteId" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Schedules">
+      <EntityTypeMapping TypeName="GeorgiaStockingsModel.Schedule">
+        <MappingFragment StoreEntitySet="Schedule">
+          <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Stockings">
+      <EntityTypeMapping TypeName="GeorgiaStockingsModel.Stocking">
+        <MappingFragment StoreEntitySet="Stockings">
+          <ScalarProperty Name="StockingId" ColumnName="StockingId" />
+          <ScalarProperty Name="WaterBody" ColumnName="WaterBody" />
+          <ScalarProperty Name="County" ColumnName="County" />
+          <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+          <ScalarProperty Name="NoteId" ColumnName="NoteId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionName="GeorgiaStockingsModel.Store.Split" FunctionImportName="Split">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="GeorgiaStockingsModel.Split_Result">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="String" ColumnName="String" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="GetScheduleByCounty" FunctionName="GeorgiaStockingsModel.Store.GetScheduleByCounty">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="GeorgiaStockingsModel.GetScheduleByCounty_Result">
+          <ScalarProperty Name="WaterBody" ColumnName="WaterBody" />
+          <ScalarProperty Name="County" ColumnName="County" />
+          <ScalarProperty Name="Schedule" ColumnName="Schedule" />
+          <ScalarProperty Name="Note" ColumnName="Note" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+  </EntityContainerMapping>
+</Mapping>

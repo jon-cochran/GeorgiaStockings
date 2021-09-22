@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="GeorgiaStockingsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Notes">
+          <Key>
+            <PropertyRef Name="NoteId" />
+          </Key>
+          <Property Name="NoteId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+          <Property Name="SequenceNo" Type="int" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="ScheduleId" />
+          </Key>
+          <Property Name="ScheduleId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="SequenceNo" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6013: The table/view 'GeorgiaStockings.dbo.StagingStockings' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity, you will need to review your schema, add the correct keys, and uncomment it.
+        <EntityType Name="StagingStockings">
+          <Property Name="WaterBody" Type="varchar" MaxLength="50" />
+          <Property Name="County" Type="varchar" MaxLength="50" />
+          <Property Name="ScheduleId" Type="int" />
+          <Property Name="Notes" Type="varchar" MaxLength="100" />
+        </EntityType>-->
+        <EntityType Name="Stockings">
+          <Key>
+            <PropertyRef Name="StockingId" />
+          </Key>
+          <Property Name="StockingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WaterBody" Type="varchar" MaxLength="50" />
+          <Property Name="County" Type="varchar" MaxLength="50" />
+          <Property Name="ScheduleId" Type="int" />
+          <Property Name="NoteId" Type="int" />
+        </EntityType>
+        <Association Name="FK_Stockings_Note">
+          <End Role="Notes" Type="Self.Notes" Multiplicity="0..1" />
+          <End Role="Stockings" Type="Self.Stockings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Notes">
+              <PropertyRef Name="NoteId" />
+            </Principal>
+            <Dependent Role="Stockings">
+              <PropertyRef Name="NoteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stockings_Schedule">
+          <End Role="Schedule" Type="Self.Schedule" Multiplicity="0..1" />
+          <End Role="Stockings" Type="Self.Stockings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="Stockings">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="GetScheduleByCounty" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CountyID" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="Split" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Delimiter" Type="char" Mode="In" />
+          <Parameter Name="String" Type="varchar(max)" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="Id" Type="int" Nullable="false" />
+                <Property Name="String" Type="varchar(max)" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <EntityContainer Name="GeorgiaStockingsModelStoreContainer">
+          <EntitySet Name="Notes" EntityType="Self.Notes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Schedule" EntityType="Self.Schedule" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stockings" EntityType="Self.Stockings" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Stockings_Note" Association="Self.FK_Stockings_Note">
+            <End Role="Notes" EntitySet="Notes" />
+            <End Role="Stockings" EntitySet="Stockings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stockings_Schedule" Association="Self.FK_Stockings_Schedule">
+            <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="Stockings" EntitySet="Stockings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="GeorgiaStockingsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <ComplexType Name="Split_Result">
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="String" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </ComplexType>
+        <EntityType Name="Note">
+          <Key>
+            <PropertyRef Name="NoteId" />
+          </Key>
+          <Property Name="NoteId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SequenceNo" Type="Int32" />
+          <NavigationProperty Name="Stockings" Relationship="Self.FK_Stockings_Note" FromRole="Notes" ToRole="Stockings" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="ScheduleId" />
+          </Key>
+          <Property Name="ScheduleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SequenceNo" Type="Int32" />
+          <NavigationProperty Name="Stockings" Relationship="Self.FK_Stockings_Schedule" FromRole="Schedule" ToRole="Stockings" />
+        </EntityType>
+        <EntityType Name="Stocking">
+          <Key>
+            <PropertyRef Name="StockingId" />
+          </Key>
+          <Property Name="StockingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WaterBody" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="County" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ScheduleId" Type="Int32" />
+          <Property Name="NoteId" Type="Int32" />
+          <NavigationProperty Name="Note" Relationship="Self.FK_Stockings_Note" FromRole="Stockings" ToRole="Notes" />
+          <NavigationProperty Name="Schedule" Relationship="Self.FK_Stockings_Schedule" FromRole="Stockings" ToRole="Schedule" />
+        </EntityType>
+        <Association Name="FK_Stockings_Note">
+          <End Role="Notes" Type="Self.Note" Multiplicity="0..1" />
+          <End Role="Stockings" Type="Self.Stocking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Notes">
+              <PropertyRef Name="NoteId" />
+            </Principal>
+            <Dependent Role="Stockings">
+              <PropertyRef Name="NoteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stockings_Schedule">
+          <End Role="Schedule" Type="Self.Schedule" Multiplicity="0..1" />
+          <End Role="Stockings" Type="Self.Stocking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="ScheduleId" />
+            </Principal>
+            <Dependent Role="Stockings">
+              <PropertyRef Name="ScheduleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="GeorgiaStockingsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Notes" EntityType="Self.Note" />
+          <EntitySet Name="Schedules" EntityType="Self.Schedule" />
+          <EntitySet Name="Stockings" EntityType="Self.Stocking" />
+          <AssociationSet Name="FK_Stockings_Note" Association="Self.FK_Stockings_Note">
+            <End Role="Notes" EntitySet="Notes" />
+            <End Role="Stockings" EntitySet="Stockings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stockings_Schedule" Association="Self.FK_Stockings_Schedule">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="Stockings" EntitySet="Stockings" />
+          </AssociationSet>
+          <FunctionImport Name="Split" IsComposable="true" ReturnType="Collection(GeorgiaStockingsModel.Split_Result)">
+            <Parameter Name="Delimiter" Mode="In" Type="String" />
+            <Parameter Name="String" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="GetScheduleByCounty" ReturnType="Collection(GeorgiaStockingsModel.GetScheduleByCounty_Result)">
+            <Parameter Name="CountyID" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="GetScheduleByCounty_Result">
+          <Property Type="String" Name="WaterBody" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="County" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Schedule" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Note" Nullable="true" MaxLength="100" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="GeorgiaStockingsModelStoreContainer" CdmEntityContainer="GeorgiaStockingsEntities">
+          <EntitySetMapping Name="Notes">
+            <EntityTypeMapping TypeName="GeorgiaStockingsModel.Note">
+              <MappingFragment StoreEntitySet="Notes">
+                <ScalarProperty Name="NoteId" ColumnName="NoteId" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schedules">
+            <EntityTypeMapping TypeName="GeorgiaStockingsModel.Schedule">
+              <MappingFragment StoreEntitySet="Schedule">
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stockings">
+            <EntityTypeMapping TypeName="GeorgiaStockingsModel.Stocking">
+              <MappingFragment StoreEntitySet="Stockings">
+                <ScalarProperty Name="StockingId" ColumnName="StockingId" />
+                <ScalarProperty Name="WaterBody" ColumnName="WaterBody" />
+                <ScalarProperty Name="County" ColumnName="County" />
+                <ScalarProperty Name="ScheduleId" ColumnName="ScheduleId" />
+                <ScalarProperty Name="NoteId" ColumnName="NoteId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionName="GeorgiaStockingsModel.Store.Split" FunctionImportName="Split">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GeorgiaStockingsModel.Split_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="String" ColumnName="String" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="GetScheduleByCounty" FunctionName="GeorgiaStockingsModel.Store.GetScheduleByCounty">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="GeorgiaStockingsModel.GetScheduleByCounty_Result">
+                <ScalarProperty Name="WaterBody" ColumnName="WaterBody" />
+                <ScalarProperty Name="County" ColumnName="County" />
+                <ScalarProperty Name="Schedule" ColumnName="Schedule" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GeorgiaStockingsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <ComplexType Name="Split_Result">
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="String" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </ComplexType>
+  <EntityType Name="Note">
+    <Key>
+      <PropertyRef Name="NoteId" />
+    </Key>
+    <Property Name="NoteId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="SequenceNo" Type="Int32" />
+    <NavigationProperty Name="Stockings" Relationship="Self.FK_Stockings_Note" FromRole="Notes" ToRole="Stockings" />
+  </EntityType>
+  <EntityType Name="Schedule">
+    <Key>
+      <PropertyRef Name="ScheduleId" />
+    </Key>
+    <Property Name="ScheduleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="SequenceNo" Type="Int32" />
+    <NavigationProperty Name="Stockings" Relationship="Self.FK_Stockings_Schedule" FromRole="Schedule" ToRole="Stockings" />
+  </EntityType>
+  <EntityType Name="Stocking">
+    <Key>
+      <PropertyRef Name="StockingId" />
+    </Key>
+    <Property Name="StockingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WaterBody" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="County" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ScheduleId" Type="Int32" />
+    <Property Name="NoteId" Type="Int32" />
+    <NavigationProperty Name="Note" Relationship="Self.FK_Stockings_Note" FromRole="Stockings" ToRole="Notes" />
+    <NavigationProperty Name="Schedule" Relationship="Self.FK_Stockings_Schedule" FromRole="Stockings" ToRole="Schedule" />
+  </EntityType>
+  <Association Name="FK_Stockings_Note">
+    <End Role="Notes" Type="Self.Note" Multiplicity="0..1" />
+    <End Role="Stockings" Type="Self.Stocking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Notes">
+        <PropertyRef Name="NoteId" />
+      </Principal>
+      <Dependent Role="Stockings">
+        <PropertyRef Name="NoteId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Stockings_Schedule">
+    <End Role="Schedule" Type="Self.Schedule" Multiplicity="0..1" />
+    <End Role="Stockings" Type="Self.Stocking" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Schedule">
+        <PropertyRef Name="ScheduleId" />
+      </Principal>
+      <Dependent Role="Stockings">
+        <PropertyRef Name="ScheduleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="GeorgiaStockingsEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Notes" EntityType="Self.Note" />
+    <EntitySet Name="Schedules" EntityType="Self.Schedule" />
+    <EntitySet Name="Stockings" EntityType="Self.Stocking" />
+    <AssociationSet Name="FK_Stockings_Note" Association="Self.FK_Stockings_Note">
+      <End Role="Notes" EntitySet="Notes" />
+      <End Role="Stockings" EntitySet="Stockings" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Stockings_Schedule" Association="Self.FK_Stockings_Schedule">
+      <End Role="Schedule" EntitySet="Schedules" />
+      <End Role="Stockings" EntitySet="Stockings" />
+    </AssociationSet>
+    <FunctionImport Name="Split" IsComposable="true" ReturnType="Collection(GeorgiaStockingsModel.Split_Result)">
+      <Parameter Name="Delimiter" Mode="In" Type="String" />
+      <Parameter Name="String" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetScheduleByCounty" ReturnType="Collection(GeorgiaStockingsModel.GetScheduleByCounty_Result)">
+      <Parameter Name="CountyID" Mode="In" Type="String" />
+    </FunctionImport>
+  </EntityContainer>
+  <ComplexType Name="GetScheduleByCounty_Result">
+    <Property Type="String" Name="WaterBody" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="County" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Schedule" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="Note" Nullable="true" MaxLength="100" />
+  </ComplexType>
+</Schema>
